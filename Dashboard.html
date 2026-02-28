@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AquaGuard | AI Predictive Dashboard</title>
+    <style>
+        :root { --primary: #087E8B; --high: #ff4d4d; --med: #ffc107; --low: #28a745; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f6fb; margin: 30px; color: #333; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .summary { display: flex; justify-content: space-around; gap: 20px; margin-bottom: 30px; }
+        .card { 
+            background: white; padding: 20px; flex: 1; text-align: center; 
+            border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary);
+        }
+        .card p { font-size: 2rem; font-weight: bold; margin: 10px 0 0; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
+        th { background: var(--primary); color: white; padding: 15px; font-size: 0.8rem; text-transform: uppercase; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #eee; }
+        .badge { padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
+        .High { background: #ffe5e5; color: var(--high); }
+        .Medium { background: #fff9e5; color: #b78a00; }
+        .Low { background: #e5f9e5; color: var(--low); }
+        .prob-bar { background: #eee; border-radius: 10px; height: 8px; width: 80px; margin: 5px auto; }
+        .prob-fill { background: var(--primary); height: 100%; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>AquaGuard Predictive Maintenance</h1>
+    <p>Targeting leaks using Random Forest Ensemble Logic</p>
+</div>
+
+<div class="summary">
+    <div class="card"><h3>Total Nodes</h3><p>{{ total }}</p></div>
+    <div class="card" style="border-top-color: var(--high)"><h3>High Risk</h3><p>{{ high }}</p></div>
+    <div class="card" style="border-top-color: var(--med)"><h3>Medium Risk</h3><p>{{ medium }}</p></div>
+    <div class="card" style="border-top-color: var(--low)"><h3>Stable</h3><p>{{ low }}</p></div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Priority</th>
+            <th>Location</th>
+            <th>Confidence</th>
+            <th>Prediction</th>
+            <th>Risk Level</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in data %}
+        <tr>
+            <td><strong>#{{ row.Priority_Rank }}</strong></td>
+            <td>Zone {{ row.Zone }} | Block {{ row.Block }}</td>
+            <td>
+                <div class="prob-bar"><div class="prob-fill" style="width: {{ row.Leak_Probability * 100 }}%"></div></div>
+                <small>{{ "%.1f"|format(row.Leak_Probability * 100) }}%</small>
+            </td>
+            <td>{{ '⚠️ LEAK' if row.Predicted_Leak == 1 else '✅ NORMAL' }}</td>
+            <td><span class="badge {{ row.Risk_Level }}">{{ row.Risk_Level }}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>
